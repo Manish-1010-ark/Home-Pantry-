@@ -13,11 +13,7 @@ jobs:
     steps:
       - name: Ping Supabase Database
         run: |
-          curl -X POST "${{ secrets.SUPABASE_URL }}/rest/v1/rpc/your_function_name" \
-          -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"
-
-          # IF YOU DON'T HAVE A FUNCTION, just ping a table instead:
-          # curl "${{ secrets.SUPABASE_URL }}/rest/v1/your_table_name?select=*&limit=1" \
-          # -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
-          # -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"
+          # We will ping the 'items' table to keep the database active
+              curl "${{ secrets.SUPABASE_URL }}/rest/v1/items?select=*&limit=1" \
+              -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
+              -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"
