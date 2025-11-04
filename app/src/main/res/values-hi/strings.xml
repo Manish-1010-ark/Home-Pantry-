@@ -1,0 +1,121 @@
+<!-- file: app/src/main/res/values-hi/strings.xml -->
+<resources>
+    <!-- App Info -->
+    <string name="app_name">होम पैंट्री+</string>
+
+    <!-- Screen Titles -->
+    <string name="inventory_title">इन्वेंटरी</string>
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="item_form_add_title">नया आइटम जोड़ें</string>
+    <string name="item_form_edit_title">आइटम संपादित करें</string>
+
+    <!-- Search & Filter -->
+    <string name="search_placeholder">पैंट्री में खोजें…</string>
+    <string name="no_items_found">कोई आइटम नहीं मिला</string>
+    <string name="no_items_empty">इन्वेंटरी में कोई आइटम नहीं</string>
+    <string name="tap_to_add">अपना पहला आइटम जोड़ने के लिए + टैप करें</string>
+    <string name="loading_inventory">आपकी इन्वेंटरी लोड हो रही है…</string>
+    <string name="please_wait">कृपया प्रतीक्षा करें</string>
+
+    <!-- Sync Status -->
+    <string name="sync_status_idle">सिंक किया गया</string>
+    <string name="sync_status_syncing">सिंक हो रहा है…</string>
+    <string name="sync_status_error">सिंक त्रुटि</string>
+    <string name="synced">सिंक किया गया</string>
+    <string name="offline">ऑफ़लाइन</string>
+
+    <!-- Categories -->
+    <string name="category_all">All</string>
+    <string name="category_label">श्रेणी</string>
+    <string name="sub_category_label">उप-श्रेणी</string>
+    <string name="all_categories">All Categories</string>
+    <string name="category_groceries">किराने का सामान</string>
+    <string name="category_spices">मसाले</string>
+    <string name="category_cleaning">सफ़ाई</string>
+    <string name="category_miscellaneous">विविध</string>
+
+    <!-- Form Fields -->
+    <string name="field_name">आइटम का नाम *</string>
+    <string name="field_name_hint">उदा. चावल, चीनी, आदि।</string>
+    <string name="field_name_hindi">हिंदी नाम (वैकल्पिक)</string>
+    <string name="field_name_hindi_hint">हिंदी में नाम</string>
+    <string name="field_category">श्रेणी *</string>
+    <string name="field_quantity">मात्रा *</string>
+    <string name="field_unit">इकाई *</string>
+    <string name="field_location">स्थान (वैकल्पिक)</string>
+    <string name="field_location_hint">उदा. किचन कैबिनेट, पैंट्री</string>
+    <string name="field_notes">नोट्स (वैकल्पिक)</string>
+    <string name="field_notes_hint">कोई अतिरिक्त विवरण जोड़ें</string>
+    <string name="required_fields">* आवश्यक फ़ील्ड</string>
+
+    <!-- Buttons -->
+    <string name="button_save_changes">बदलाव सहेजें</string>
+    <string name="button_add_item">आइटम जोड़ें</string>
+    <string name="button_cancel">रद्द करें</string>
+    <string name="button_delete">हटाएं</string>
+    <string name="button_logout">लॉग आउट</string>
+    <string name="button_create">बनाएं</string>
+    <string name="button_import">आयात करें</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_delete_title">आइटम हटाएं</string>
+    <string name="dialog_delete_message">क्या आप वाकई इस आइटम को हटाना चाहते हैं? इस क्रिया को पूर्ववत नहीं किया जा सकता।</string>
+    <string name="dialog_duplicate_title">आइटम पहले से मौजूद है</string>
+    <string name="dialog_duplicate_message">\'%1$s\' नाम का एक आइटम आपकी इन्वेंटरी में पहले से मौजूद है।</string>
+    <string name="dialog_duplicate_current">वर्तमान:</string>
+    <string name="dialog_duplicate_adding">जोड़ा जा रहा है:</string>
+    <string name="dialog_duplicate_new_total">नया कुल:</string>
+    <string name="dialog_duplicate_question">आप क्या करना चाहेंगे?</string>
+    <string name="dialog_duplicate_add_existing">मौजूदा में जोड़ें</string>
+    <string name="dialog_duplicate_create_new">नए आइटम के रूप में बनाएं</string>
+    <string name="dialog_new_category_title">नई श्रेणी बनाएं</string>
+    <string name="dialog_new_category_label">श्रेणी का नाम</string>
+    <string name="dialog_new_category_hint">उदा. पेय पदार्थ, स्नैक्स</string>
+    <string name="create_new_category">नई श्रेणी बनाएं</string>
+    <string name="location_label">स्थान:</string>
+
+    <!-- Settings Sections -->
+    <string name="settings_section_account">खाता</string>
+    <string name="settings_section_general">सामान्य</string>
+    <string name="settings_section_data">डेटा प्रबंधन</string>
+    <string name="settings_section_advanced">उन्नत</string>
+
+    <!-- Settings Items -->
+    <string name="settings_house_name">घर का नाम</string>
+    <string name="settings_language_title">भाषा</string>
+    <string name="settings_language_desc">ऐप की भाषा बदलें</string>
+    <string name="settings_language_current">वर्तमान: %1$s</string>
+    <string name="settings_cloud_title">क्लाउड सिंक</string>
+    <string name="settings_cloud_desc">अपने उपकरणों में अपनी इन्वेंटरी सिंक करें</string>
+    <string name="settings_import_title">एक्सेल से आयात करें</string>
+    <string name="settings_import_desc">एक्सेल फ़ाइल से अपना पैंट्री डेटा आयात करें</string>
+    <string name="settings_export_title">एक्सेल में निर्यात करें</string>
+    <string name="settings_export_desc">अपने पैंट्री डेटा को एक्सेल फ़ाइल में निर्यात करें</string>
+    <string name="settings_ai_title">एआई संगठन</string>
+    <string name="settings_ai_desc">एआई को अपने आइटम व्यवस्थित करने में मदद करने दें</string>
+    <string name="settings_alerts_title">कम स्टॉक अलर्ट</string>
+    <string name="settings_analytics_title">उपयोग विश्लेषण</string>
+    <string name="settings_coming_soon">जल्द आ रहा है</string>
+    <string name="settings_soon_badge">जल्द</string>
+
+    <!-- App Info -->
+    <string name="app_info_name">होम पैंट्री+ स्टार्टर</string>
+    <string name="app_info_version">संस्करण 1.0.0</string>
+    <string name="app_info_tech">Kotlin और Jetpack Compose के साथ बनाया गया</string>
+
+    <!-- Status Messages -->
+    <string name="logging_out">लॉग आउट हो रहा है…</string>
+    <string name="items_count">%1$d आइटम</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_settings">सेटिंग्स</string>
+    <string name="cd_add_item">आइटम जोड़ें</string>
+    <string name="cd_delete">हटाएं</string>
+    <string name="cd_syncing">सिंक हो रहा है</string>
+    <string name="cd_synced">सिंक किया गया</string>
+    <string name="cd_offline">ऑफ़लाइन</string>
+
+    <!-- Language Names -->
+    <string name="language_english">English</string>
+    <string name="language_hindi">हिंदी (Hindi)</string>
+</resources>

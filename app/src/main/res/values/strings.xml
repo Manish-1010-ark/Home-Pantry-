@@ -1,0 +1,121 @@
+<!-- file: app/src/main/res/values/strings.xml -->
+<resources>
+    <!-- App Info -->
+    <string name="app_name">Home Pantry+</string>
+
+    <!-- Screen Titles -->
+    <string name="inventory_title">Inventory</string>
+    <string name="settings_title">Settings</string>
+    <string name="item_form_add_title">Add New Item</string>
+    <string name="item_form_edit_title">Edit Item</string>
+
+    <!-- Search & Filter -->
+    <string name="search_placeholder">Search pantry…</string>
+    <string name="no_items_found">No items found</string>
+    <string name="no_items_empty">No items in inventory</string>
+    <string name="tap_to_add">Tap + to add your first item</string>
+    <string name="loading_inventory">Loading your inventory…</string>
+    <string name="please_wait">Please wait</string>
+
+    <!-- Sync Status -->
+    <string name="sync_status_idle">Synced</string>
+    <string name="sync_status_syncing">Syncing…</string>
+    <string name="sync_status_error">Sync Error</string>
+    <string name="synced">Synced</string>
+    <string name="offline">Offline</string>
+
+    <!-- Categories -->
+    <string name="category_all">All</string>
+    <string name="category_label">Category</string>
+    <string name="sub_category_label">Sub-Category</string>
+    <string name="all_categories">All Categories</string>
+    <string name="category_groceries">Groceries</string>
+    <string name="category_spices">Spices</string>
+    <string name="category_cleaning">Cleaning</string>
+    <string name="category_miscellaneous">Miscellaneous</string>
+
+    <!-- Form Fields -->
+    <string name="field_name">Item Name *</string>
+    <string name="field_name_hint">e.g., Rice, Sugar, etc.</string>
+    <string name="field_name_hindi">Hindi Name (Optional)</string>
+    <string name="field_name_hindi_hint">हिंदी में नाम</string>
+    <string name="field_category">Category *</string>
+    <string name="field_quantity">Quantity *</string>
+    <string name="field_unit">Unit *</string>
+    <string name="field_location">Location (Optional)</string>
+    <string name="field_location_hint">e.g., Kitchen Cabinet, Pantry</string>
+    <string name="field_notes">Notes (Optional)</string>
+    <string name="field_notes_hint">Add any additional details</string>
+    <string name="required_fields">* Required fields</string>
+
+    <!-- Buttons -->
+    <string name="button_save_changes">Save Changes</string>
+    <string name="button_add_item">Add Item</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_logout">Logout</string>
+    <string name="button_create">Create</string>
+    <string name="button_import">Import</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_delete_title">Delete Item</string>
+    <string name="dialog_delete_message">Are you sure you want to delete this item? This action cannot be undone.</string>
+    <string name="dialog_duplicate_title">Item Already Exists</string>
+    <string name="dialog_duplicate_message">An item named \'%1$s\' already exists in your inventory.</string>
+    <string name="dialog_duplicate_current">Current:</string>
+    <string name="dialog_duplicate_adding">Adding:</string>
+    <string name="dialog_duplicate_new_total">New Total:</string>
+    <string name="dialog_duplicate_question">What would you like to do?</string>
+    <string name="dialog_duplicate_add_existing">Add to Existing</string>
+    <string name="dialog_duplicate_create_new">Create as New Item</string>
+    <string name="dialog_new_category_title">Create New Category</string>
+    <string name="dialog_new_category_label">Category Name</string>
+    <string name="dialog_new_category_hint">e.g., Beverages, Snacks</string>
+    <string name="create_new_category">Create New Category</string>
+    <string name="location_label">Location:</string>
+
+    <!-- Settings Sections -->
+    <string name="settings_section_account">Account</string>
+    <string name="settings_section_general">General</string>
+    <string name="settings_section_data">Data Management</string>
+    <string name="settings_section_advanced">Advanced</string>
+
+    <!-- Settings Items -->
+    <string name="settings_house_name">House Name</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_desc">Change the app language</string>
+    <string name="settings_language_current">Current: %1$s</string>
+    <string name="settings_cloud_title">Cloud Sync</string>
+    <string name="settings_cloud_desc">Sync your inventory across devices</string>
+    <string name="settings_import_title">Import from Excel</string>
+    <string name="settings_import_desc">Import your pantry data from Excel file</string>
+    <string name="settings_export_title">Export to Excel</string>
+    <string name="settings_export_desc">Export your pantry data to Excel file</string>
+    <string name="settings_ai_title">AI Organization</string>
+    <string name="settings_ai_desc">Let AI help organize your items</string>
+    <string name="settings_alerts_title">Low Stock Alerts</string>
+    <string name="settings_analytics_title">Usage Analytics</string>
+    <string name="settings_coming_soon">Coming soon</string>
+    <string name="settings_soon_badge">Soon</string>
+
+    <!-- App Info -->
+    <string name="app_info_name">Home Pantry+ Starter</string>
+    <string name="app_info_version">Version 1.0.0</string>
+    <string name="app_info_tech">Created with Kotlin and Jetpack Compose</string>
+
+    <!-- Status Messages -->
+    <string name="logging_out">Logging out…</string>
+    <string name="items_count">%1$d items</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_settings">Settings</string>
+    <string name="cd_add_item">Add Item</string>
+    <string name="cd_delete">Delete</string>
+    <string name="cd_syncing">Syncing</string>
+    <string name="cd_synced">Synced</string>
+    <string name="cd_offline">Offline</string>
+
+    <!-- Language Names -->
+    <string name="language_english">English</string>
+    <string name="language_hindi">हिंदी (Hindi)</string>
+</resources>
