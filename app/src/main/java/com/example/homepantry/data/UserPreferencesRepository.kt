@@ -30,15 +30,29 @@ class UserPreferencesRepository @Inject constructor(@ApplicationContext private 
         preferences[APP_LANGUAGE_KEY] ?: "en"
     }
 
+    val APP_THEME = stringPreferencesKey("app_theme")
+
+    val appTheme: Flow<String> = context.dataStore.data // <-- Also add 'context.'
+        .map { preferences ->
+            preferences[APP_THEME] ?: "light" // <-- Fixed
+        }
+
+    suspend fun saveAppTheme(theme: String) {
+        context.dataStore.edit { preferences -> // <-- Also add 'context.'
+            preferences[APP_THEME] = theme // <-- Fixed
+        }
+    }
+
     // A Flow that emits the saved house info whenever it changes
     // Updated to include house name as third element in Triple
-    val houseInfoFlow: Flow<Triple<Long?, String?, String?>> = context.dataStore.data.map { preferences ->
-        Triple(
-            preferences[HOUSE_ID_KEY],
-            preferences[HOUSE_PIN_KEY],
-            preferences[HOUSE_NAME_KEY]
-        )
-    }
+    val houseInfoFlow: Flow<Triple<Long?, String?, String?>> =
+        context.dataStore.data.map { preferences ->
+            Triple(
+                preferences[HOUSE_ID_KEY],
+                preferences[HOUSE_PIN_KEY],
+                preferences[HOUSE_NAME_KEY]
+            )
+        }
 
     // Function to save the house ID, PIN, and NAME after a successful login
     suspend fun saveHouseInfo(houseId: Long, pin: String, houseName: String) {

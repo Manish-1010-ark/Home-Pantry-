@@ -1,7 +1,9 @@
 package com.example.homepantry.ui
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -12,11 +14,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.homepantry.ui.screens.InventoryScreen
-import com.example.homepantry.ui.screens.ItemFormScreen
-import com.example.homepantry.ui.screens.PinEntryScreen
-import com.example.homepantry.ui.screens.SettingsScreen
-import com.example.homepantry.ui.screens.AuthCheckScreen
+import com.example.homepantry.ui.auth.AuthCheckScreen
+import com.example.homepantry.ui.auth.PinEntryScreen
+import com.example.homepantry.ui.inventory.InventoryScreen
+import com.example.homepantry.ui.itemform.ItemFormScreen
+import com.example.homepantry.ui.settings.SettingsScreen
 
 object AppRoutes {
     const val AUTH_CHECK = "auth_check"

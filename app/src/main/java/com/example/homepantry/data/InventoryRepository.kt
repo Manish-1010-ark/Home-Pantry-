@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.homepantry.data.local.ItemDao
 import com.example.homepantry.data.local.toEntity
 import com.example.homepantry.data.local.toItem
-import com.example.homepantry.ui.SyncState
+import com.example.homepantry.ui.inventory.SyncState
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.realtime.PostgresAction
 import io.github.jan.supabase.realtime.Realtime
@@ -221,14 +221,17 @@ class InventoryRepository @Inject constructor(
                                 Log.d(TAG, "Item inserted remotely")
                                 syncFromRemote(houseId)
                             }
+
                             is PostgresAction.Update -> {
                                 Log.d(TAG, "Item updated remotely")
                                 syncFromRemote(houseId)
                             }
+
                             is PostgresAction.Delete -> {
                                 Log.d(TAG, "Item deleted remotely")
                                 syncFromRemote(houseId)
                             }
+
                             else -> Log.d(TAG, "Other action: $action")
                         }
                     }
@@ -281,7 +284,10 @@ class InventoryRepository @Inject constructor(
                     }
                     .decodeList<Item>()
 
-                Log.d(TAG, "Items added to Supabase successfully with IDs: ${insertedItems.map { it.id }}")
+                Log.d(
+                    TAG,
+                    "Items added to Supabase successfully with IDs: ${insertedItems.map { it.id }}"
+                )
 
                 // Step 2: Insert into Room with the server-generated IDs
                 val entities = insertedItems.map { it.toEntity() }

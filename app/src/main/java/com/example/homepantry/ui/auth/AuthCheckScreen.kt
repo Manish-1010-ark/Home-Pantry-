@@ -1,25 +1,39 @@
-package com.example.homepantry.ui.screens
+package com.example.homepantry.ui.auth
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Inventory2
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.homepantry.ui.InventoryViewModel
-import com.example.homepantry.ui.LoginState
 
 @Composable
 fun AuthCheckScreen(
-    viewModel: InventoryViewModel = hiltViewModel(),
+    viewModel: AuthViewModel = hiltViewModel(),
     onNavigateToLogin: () -> Unit,
     onNavigateToInventory: () -> Unit
 ) {
@@ -29,7 +43,8 @@ fun AuthCheckScreen(
         when (loginState) {
             is LoginState.Success -> onNavigateToInventory()
             is LoginState.Idle, is LoginState.Error -> onNavigateToLogin()
-            else -> { /* Do nothing while Checking or Loading */ }
+            else -> { /* Do nothing while Checking or Loading */
+            }
         }
     }
 
@@ -48,8 +63,8 @@ fun AuthCheckScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background), // FIX: Add background
-    contentAlignment = Alignment.Center
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

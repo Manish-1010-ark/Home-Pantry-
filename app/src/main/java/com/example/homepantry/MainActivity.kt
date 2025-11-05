@@ -7,6 +7,12 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import com.example.homepantry.data.UserPreferencesRepository
 import com.example.homepantry.ui.AppNavigation
 import com.example.homepantry.ui.theme.HomePantryTheme
@@ -61,8 +67,17 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            HomePantryTheme {
-                AppNavigation()
+            // Collect the saved theme, defaulting to "light" (false)
+            val currentTheme by userPreferencesRepository.appTheme.collectAsState(initial = "light")
+            val isDark = currentTheme == "dark"
+
+            HomePantryTheme(darkTheme = isDark) { // Pass the value here
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    AppNavigation()
+                }
             }
         }
     }
@@ -76,4 +91,5 @@ class MainActivity : ComponentActivity() {
 
         return context.createConfigurationContext(config)
     }
+
 }

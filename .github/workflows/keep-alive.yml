@@ -14,6 +14,6 @@ jobs:
       - name: Ping Supabase Database
         run: |
           # We will ping the 'items' table to keep the database active
-              curl "${{ secrets.SUPABASE_URL }}/rest/v1/items?select=*&limit=1" \
-              -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
-              -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"
+          curl "${{ secrets.SUPABASE_URL }}/rest/v1/items?select=*&limit=1" \
+          -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"
