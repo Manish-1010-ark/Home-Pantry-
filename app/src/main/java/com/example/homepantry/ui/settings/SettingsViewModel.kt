@@ -16,8 +16,11 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.apache.poi.ss.usermodel.CellType
+import org.apache.poi.ss.usermodel.DataFormatter
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 // New data structures for conflict resolution
@@ -121,10 +124,20 @@ class SettingsViewModel @Inject constructor(
     }
 
     /**
-     * IMPROVED: Now with progress tracking and better error handling
+     * Helper function to get current timestamp in ISO format
+     */
+    private fun getCurrentTimestamp(): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
+        return dateFormat.format(Date())
+    }
+
+    /**
+     * IMPROVED: Now with DataFormatter for robust cell reading, progress tracking,
+     * better error handling, and added_on column support
      */
     fun importItemsFromExcel(uri: Uri, context: Context, houseId: Long) {
         Log.d(TAG, "=== STARTING CONFLICT-SAFE EXCEL IMPORT ===")
+        Log.d(TAG, "Target houseId: $houseId")
         _importState.value = ImportState.Loading("Preparing import...")
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -134,8 +147,8 @@ class SettingsViewModel @Inject constructor(
                 Log.d(TAG, "Step 1: Fetched ${existingItems.size} existing items from cache")
                 _importState.value = ImportState.Loading("Reading Excel file...")
 
-                // Step 2: Parse Excel file
-                Log.d(TAG, "Step 2: Parsing Excel file...")
+                // Step 2: Parse Excel file with DataFormatter
+                Log.d(TAG, "Step 2: Parsing Excel file with DataFormatter...")
                 val aggregatedItemsMap = mutableMapOf<String, AggregatedItem>()
                 var totalRowsParsed = 0
                 var skippedRowCount = 0
@@ -145,6 +158,9 @@ class SettingsViewModel @Inject constructor(
                     val workbook = XSSFWorkbook(stream)
                     val sheet = workbook.getSheetAt(0)
                     val totalRows = sheet.lastRowNum
+
+                    // Initialize DataFormatter for robust cell reading
+                    val formatter = DataFormatter()
 
                     for (rowIndex in 1..totalRows) {
                         val row = sheet.getRow(rowIndex) ?: continue
@@ -157,14 +173,16 @@ class SettingsViewModel @Inject constructor(
                         }
 
                         try {
-                            val name = row.getCell(0)?.stringCellValue?.trim() ?: ""
+                            // Col 0: Name - Using DataFormatter
+                            val name = formatter.formatCellValue(row.getCell(0)).trim()
                             if (name.isBlank()) {
                                 skippedRowCount++
                                 skippedRows.add("Row ${rowIndex + 1}: Empty name")
                                 continue
                             }
 
-                            val categoryRaw = row.getCell(1)?.stringCellValue?.trim() ?: ""
+                            // Col 1: Category - Using DataFormatter
+                            val categoryRaw = formatter.formatCellValue(row.getCell(1)).trim()
                             val category = validateAndNormalizeCategory(categoryRaw)
                             if (category == null) {
                                 skippedRowCount++
@@ -172,13 +190,9 @@ class SettingsViewModel @Inject constructor(
                                 continue
                             }
 
-                            val quantity = row.getCell(2)?.let {
-                                when (it.cellType) {
-                                    CellType.NUMERIC -> it.numericCellValue
-                                    CellType.STRING -> it.stringCellValue.toDoubleOrNull()
-                                    else -> null
-                                }
-                            }
+                            // Col 2: Quantity - Using DataFormatter then convert to Double
+                            val quantityStr = formatter.formatCellValue(row.getCell(2)).trim()
+                            val quantity = quantityStr.toDoubleOrNull()
 
                             if (quantity == null || quantity < 0) {
                                 skippedRowCount++
@@ -194,13 +208,26 @@ class SettingsViewModel @Inject constructor(
                                 )
                             }
 
-                            val unit = row.getCell(3)?.stringCellValue?.trim() ?: "piece"
-                            val location =
-                                row.getCell(4)?.stringCellValue?.trim()?.takeIf { it.isNotBlank() }
-                            val notes =
-                                row.getCell(5)?.stringCellValue?.trim()?.takeIf { it.isNotBlank() }
-                            val nameHindi =
-                                row.getCell(6)?.stringCellValue?.trim()?.takeIf { it.isNotBlank() }
+                            // Col 3: Unit - Using DataFormatter
+                            val unitRaw = formatter.formatCellValue(row.getCell(3)).trim()
+                            val unit = unitRaw.ifBlank { "piece" }
+
+                            // Col 4: Location - Using DataFormatter
+                            val location = formatter.formatCellValue(row.getCell(4)).trim()
+                                .takeIf { it.isNotBlank() }
+
+                            // Col 5: Notes - Using DataFormatter
+                            val notes = formatter.formatCellValue(row.getCell(5)).trim()
+                                .takeIf { it.isNotBlank() }
+
+                            // Col 6: NameHindi - Using DataFormatter
+                            val nameHindi = formatter.formatCellValue(row.getCell(6)).trim()
+                                .takeIf { it.isNotBlank() }
+
+                            // Col 7: added_on - Using DataFormatter (handles all date formats)
+                            // Note: This is read but not used since Item doesn't have created_at field
+                            val addedOn = formatter.formatCellValue(row.getCell(7)).trim()
+                                .takeIf { it.isNotBlank() }
 
                             val itemKey =
                                 "${name.lowercase()}|${unit.lowercase()}|${location?.lowercase() ?: ""}"
@@ -211,7 +238,8 @@ class SettingsViewModel @Inject constructor(
                                     quantity = existing.quantity + quantity,
                                     category = category,
                                     notes = notes ?: existing.notes,
-                                    nameHindi = nameHindi ?: existing.nameHindi
+                                    nameHindi = nameHindi ?: existing.nameHindi,
+                                    addedOn = addedOn ?: existing.addedOn
                                 )
                                 Log.d(
                                     TAG,
@@ -225,7 +253,8 @@ class SettingsViewModel @Inject constructor(
                                     unit = unit,
                                     location = location,
                                     notes = notes,
-                                    nameHindi = nameHindi
+                                    nameHindi = nameHindi,
+                                    addedOn = addedOn
                                 )
                             }
                         } catch (e: Exception) {
@@ -266,13 +295,14 @@ class SettingsViewModel @Inject constructor(
                         // CONFLICT DETECTED
                         val excelItem = Item(
                             name = aggregatedItem.name,
+                            nameHindi = aggregatedItem.nameHindi,
                             category = aggregatedItem.category,
                             quantity = aggregatedItem.quantity,
                             unit = aggregatedItem.unit,
                             location = aggregatedItem.location,
                             notes = aggregatedItem.notes,
-                            nameHindi = aggregatedItem.nameHindi,
-                            house_id = houseId
+                            house_id = houseId,
+                            created_at = aggregatedItem.addedOn ?: getCurrentTimestamp()
                         )
                         tempConflicts.add(ImportConflict(excelItem, existingItem))
                         Log.d(TAG, "CONFLICT: '${aggregatedItem.name}' exists in database")
@@ -280,16 +310,20 @@ class SettingsViewModel @Inject constructor(
                         // NEW ITEM
                         val newItem = Item(
                             name = aggregatedItem.name,
+                            nameHindi = aggregatedItem.nameHindi,
                             category = aggregatedItem.category,
                             quantity = aggregatedItem.quantity,
                             unit = aggregatedItem.unit,
                             location = aggregatedItem.location,
                             notes = aggregatedItem.notes,
-                            nameHindi = aggregatedItem.nameHindi,
-                            house_id = houseId
+                            house_id = houseId,
+                            created_at = aggregatedItem.addedOn ?: getCurrentTimestamp()
                         )
                         tempNewItems.add(newItem)
-                        Log.d(TAG, "NEW: '${aggregatedItem.name}'")
+                        Log.d(
+                            TAG,
+                            "NEW: '${aggregatedItem.name}' with timestamp: ${newItem.created_at}"
+                        )
                     }
                 }
 
@@ -400,9 +434,12 @@ class SettingsViewModel @Inject constructor(
         val mergedItem = dbItem.copy(
             quantity = dbItem.quantity + excelItem.quantity,
             category = excelItem.category,
-            unit = excelItem.unit, // Update unit to Excel version
+            unit = excelItem.unit,
             notes = excelItem.notes ?: dbItem.notes,
-            nameHindi = excelItem.nameHindi ?: dbItem.nameHindi
+            nameHindi = excelItem.nameHindi ?: dbItem.nameHindi,
+            house_id = dbItem.house_id,
+            // Preserve database created_at on merge
+            created_at = dbItem.created_at
         )
         repository.updateItem(mergedItem)
         _report.value = _report.value.copy(
@@ -415,7 +452,12 @@ class SettingsViewModel @Inject constructor(
     }
 
     private suspend fun applyReplace(excelItem: Item, dbItem: Item) {
-        val replacedItem = excelItem.copy(id = dbItem.id, house_id = dbItem.house_id)
+        val replacedItem = excelItem.copy(
+            id = dbItem.id,
+            house_id = dbItem.house_id,
+            // Use Excel's created_at on replace (or keep database one if Excel doesn't have it)
+            created_at = excelItem.created_at.ifBlank { dbItem.created_at }
+        )
         repository.updateItem(replacedItem)
         _report.value = _report.value.copy(
             itemsReplaced = _report.value.itemsReplaced + dbItem.name
@@ -500,6 +542,7 @@ class SettingsViewModel @Inject constructor(
 
 /**
  * Helper data class for aggregating items during Excel import
+ * addedOn from Column 7 is used as created_at timestamp
  */
 private data class AggregatedItem(
     val name: String,
@@ -508,5 +551,6 @@ private data class AggregatedItem(
     val unit: String,
     val location: String?,
     val notes: String?,
-    val nameHindi: String?
+    val nameHindi: String?,
+    val addedOn: String? // Maps to Item.created_at
 )

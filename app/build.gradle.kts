@@ -9,7 +9,8 @@ plugins {
     // Apply the serialization and compose compiler plugins
     kotlin("plugin.serialization") version "1.9.22"
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
-//    id("com.google.devtools.ksp")
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -26,10 +27,6 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-
-        // Using findProperty is safer in case local.properties doesn't exist yet
-        buildConfigField("String", "SUPABASE_URL", "\"${project.findProperty("SUPABASE_URL") ?: ""}\"")
-        buildConfigField("String", "SUPABASE_PUBLISHABLE_KEY", "\"${project.findProperty("SUPABASE_PUBLISHABLE_KEY") ?: ""}\"")
     }
 
     buildFeatures {
@@ -40,7 +37,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -67,6 +67,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.appcompat)
+
     // We will use a BOM (Bill of Materials) for Compose to manage versions automatically
     val composeBom = platform("androidx.compose:compose-bom:2024.05.00")
     implementation(composeBom)
@@ -86,14 +87,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
-    // Supabase Kotlin Client - Using the BOM is the best practice!
-    implementation(platform("io.github.jan-tennert.supabase:bom:2.4.1"))
-    implementation("io.github.jan-tennert.supabase:postgrest-kt")
-    implementation("io.github.jan-tennert.supabase:realtime-kt")
-
-    // Ktor client (required by Supabase)
-    implementation("io.ktor:ktor-client-cio:2.3.11") // Use CIO for Android
-
     // Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
@@ -109,20 +102,23 @@ dependencies {
     // Jetpack DataStore for saving user preferences
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
-    // Room Database - for local caching
+    // Room Database - for local caching (optional - can be removed if not using Room)
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     testImplementation("androidx.room:room-testing:$roomVersion")
 
-
-    // Coroutines (if not already added)
+    // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-    // Optional: Room testing
-    testImplementation("androidx.room:room-testing:${roomVersion}")
+    // Firebase BoM - manages all Firebase library versions
+    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
 
+    // Firebase dependencies - NO version numbers when using BoM
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-firestore")
+    
     // Test Dependencies
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

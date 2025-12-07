@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.Instant
 import javax.inject.Inject
 
 sealed class OperationState {
@@ -54,6 +55,13 @@ class ItemFormViewModel @Inject constructor(
     }
 
     /**
+     * Helper function to get current timestamp in ISO format
+     */
+    private fun getCurrentTimestamp(): String {
+        return Instant.now().toString()
+    }
+
+    /**
      * Validates and normalizes category format.
      * Accepts:
      * - "Main:Sub" format (e.g., "Food & Groceries:Spices & Seasonings")
@@ -84,11 +92,21 @@ class ItemFormViewModel @Inject constructor(
 
     /**
      * Initiate add item with fuzzy duplicate check
+     * Ensures the item has a created_at timestamp before processing
      */
     fun initiateAddItem(newItem: Item) {
         Log.d(TAG, "Initiating add item with fuzzy duplicate check for: ${newItem.name}")
 
-        val newNameNormalized = normalizeItemName(newItem.name)
+        // Ensure the item has a timestamp
+        val timestampedItem = if (newItem.created_at.isBlank()) {
+            val timestamp = getCurrentTimestamp()
+            Log.d(TAG, "Adding timestamp to new item: $timestamp")
+            newItem.copy(created_at = timestamp)
+        } else {
+            newItem
+        }
+
+        val newNameNormalized = normalizeItemName(timestampedItem.name)
 
         // Check for duplicate using fuzzy matching
         val existingItem = _itemsCache.value.find { existingItem ->
@@ -96,7 +114,10 @@ class ItemFormViewModel @Inject constructor(
 
             // Check 1: Exact match after normalization
             if (existingNameNormalized == newNameNormalized) {
-                Log.d(TAG, "Exact match found: '${existingItem.name}' matches '${newItem.name}'")
+                Log.d(
+                    TAG,
+                    "Exact match found: '${existingItem.name}' matches '${timestampedItem.name}'"
+                )
                 return@find true
             }
 
@@ -104,7 +125,10 @@ class ItemFormViewModel @Inject constructor(
             if (existingNameNormalized.contains(newNameNormalized) ||
                 newNameNormalized.contains(existingNameNormalized)
             ) {
-                Log.d(TAG, "Containment match found: '${existingItem.name}' ~ '${newItem.name}'")
+                Log.d(
+                    TAG,
+                    "Containment match found: '${existingItem.name}' ~ '${timestampedItem.name}'"
+                )
                 return@find true
             }
 
@@ -117,7 +141,7 @@ class ItemFormViewModel @Inject constructor(
             if (hasCommonWord && (existingCoreWords.size <= 2 || newCoreWords.size <= 2)) {
                 Log.d(
                     TAG,
-                    "Core word match found: '${existingItem.name}' ~ '${newItem.name}' (words: $existingCoreWords vs $newCoreWords)"
+                    "Core word match found: '${existingItem.name}' ~ '${timestampedItem.name}' (words: $existingCoreWords vs $newCoreWords)"
                 )
                 return@find true
             }
@@ -127,10 +151,10 @@ class ItemFormViewModel @Inject constructor(
 
         if (existingItem != null) {
             Log.d(TAG, "Potential duplicate found: ${existingItem.name} (ID: ${existingItem.id})")
-            _duplicateCheckState.value = DuplicateCheckState.Found(existingItem, newItem)
+            _duplicateCheckState.value = DuplicateCheckState.Found(existingItem, timestampedItem)
         } else {
             Log.d(TAG, "No duplicate found, proceeding with add")
-            addItem(newItem)
+            addItem(timestampedItem)
         }
     }
 
@@ -200,11 +224,22 @@ class ItemFormViewModel @Inject constructor(
 
     /**
      * Confirm creating new duplicate item
+     * Ensures the item has a timestamp before saving
      */
     fun confirmCreateNewDuplicate(newItem: Item) {
         Log.d(TAG, "Confirming create new duplicate: ${newItem.name}")
         _duplicateCheckState.value = DuplicateCheckState.Idle
-        addItem(newItem)
+
+        // Ensure the item has a timestamp
+        val timestampedItem = if (newItem.created_at.isBlank()) {
+            val timestamp = getCurrentTimestamp()
+            Log.d(TAG, "Adding timestamp to duplicate item: $timestamp")
+            newItem.copy(created_at = timestamp)
+        } else {
+            newItem
+        }
+
+        addItem(timestampedItem)
     }
 
     /**
@@ -252,9 +287,20 @@ class ItemFormViewModel @Inject constructor(
                         throw Exception("Existing item not found")
                     }
                 } else {
-                    // Insert new item
-                    Log.d(TAG, "Adding new item: ${item.name}")
-                    repository.addItem(mutableListOf(item))
+                    // Insert new item - ensure it has a timestamp
+                    val timestampedItem = if (item.created_at.isBlank()) {
+                        val timestamp = getCurrentTimestamp()
+                        Log.d(TAG, "Adding timestamp to item before insert: $timestamp")
+                        item.copy(created_at = timestamp)
+                    } else {
+                        item
+                    }
+
+                    Log.d(
+                        TAG,
+                        "Adding new item: ${timestampedItem.name} with timestamp: ${timestampedItem.created_at}"
+                    )
+                    repository.addItem(mutableListOf(timestampedItem))
                     Log.d(TAG, "Item added successfully")
                     _operationState.value =
                         OperationState.Success("Item added successfully", "add_item")
